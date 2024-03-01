@@ -1,26 +1,46 @@
-let fs = require('fs');
+const fs = require('fs');
+const readline = require('readline');
+const nodeProcess = require('process')
 
-let path = "./";
+const { stdin: input, stdout: output } = nodeProcess;
+const rl = readline.createInterface({ input, output });
 
-let oldNameProj = "DI4";
-let newNameProj = "DI4_AO";
+const ROOT_PATH = "./";
 
-fs.readdir(path, function (err, items) {
+const renameFiles = (oldNameProj, newNameProj) => {
+  fs.readdir(ROOT_PATH, (_, items) => {
 
-  let hasOldName = items.filter(function (item) {
-    return item.includes(oldNameProj);
+    const fileList = items.filter((item) => item.includes(oldNameProj))
+
+    console.log(fileList);
+
+    fileList.map((item) => {
+      const file = ROOT_PATH + item;
+      const newNameFile = item.replace(oldNameProj, newNameProj);
+
+      fs.rename(file, item.replace(item, newNameFile), (err) => {
+        if (err) throw err; // не удалось переименовать файл
+        console.log('Файл успешно переименован');
+      });
+
+    })
+
+  });
+}
+
+// main
+(async function () {
+  // получили старое название файла
+  const oldNameProj = await new Promise(resolve => {
+    rl.question("Старое название файла: ", resolve)
+  })
+  // получили новое название файла
+  const newNameProj = await new Promise(resolve => {
+    rl.question("Новое название файла: ", resolve)
   })
 
-  console.log(hasOldName);
+  rl.close();
 
-  hasOldName.map((item) => {
-    let file = path + item;
-    newNameFile = item.replace(oldNameProj, newNameProj);
+  renameFiles(oldNameProj, newNameProj)
 
-    fs.rename(file, item.replace(item, newNameFile), err => {
-      if (err) throw err; // не удалось переименовать файл
-      console.log('Файл успешно переименован');
-    });
-  })
-
-});
+})()
