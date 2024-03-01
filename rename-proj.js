@@ -7,17 +7,21 @@ const rl = readline.createInterface({ input, output });
 
 const ROOT_PATH = "./";
 
-const renameFiles = (oldNameProj, newNameProj) => {
+const renameFiles = (newNameProj) => {
   fs.readdir(ROOT_PATH, (_, items) => {
 
-    const fileList = items.filter((item) => item.includes(oldNameProj))
-
+    const nameFileProj = items.filter((item) => item.includes('.pro'))[0];
+    const nameProj = nameFileProj.split('.')[0];
+    
+    const fileList = items.filter((item) => item.includes(nameProj));
+    
     console.log(fileList);
+    console.log(nameProj);
 
     fileList.map((item) => {
       const file = ROOT_PATH + item;
-      const newNameFile = item.replace(oldNameProj, newNameProj);
-
+      const newNameFile = item.replace(nameProj, newNameProj);
+      
       fs.rename(file, item.replace(item, newNameFile), (err) => {
         if (err) throw err; // не удалось переименовать файл
         console.log('Файл успешно переименован');
@@ -28,19 +32,16 @@ const renameFiles = (oldNameProj, newNameProj) => {
   });
 }
 
+
 // main
 (async function () {
-  // получили старое название файла
-  const oldNameProj = await new Promise(resolve => {
-    rl.question("Старое название файла: ", resolve)
-  })
-  // получили новое название файла
+
   const newNameProj = await new Promise(resolve => {
-    rl.question("Новое название файла: ", resolve)
+    rl.question("Новое название проекта: ", resolve)
   })
 
   rl.close();
 
-  renameFiles(oldNameProj, newNameProj)
+  renameFiles(newNameProj)
 
 })()
