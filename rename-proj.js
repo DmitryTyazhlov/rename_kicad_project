@@ -11,12 +11,14 @@ const renameFiles = (newNameProj) => {
   fs.readdir(ROOT_PATH, (_, items) => {
 
     const nameFileProj = items.filter((item) => item.includes('.pro'))[0];
-    const nameProj = nameFileProj.split('.')[0];
+    const nameProj = nameFileProj?.split('.')[0];
     
     const fileList = items.filter((item) => item.includes(nameProj));
     
     console.log(fileList);
     console.log(nameProj);
+
+    if (nameProj === undefined) return;
 
     fileList.map((item) => {
       const file = ROOT_PATH + item;
